@@ -1,0 +1,15 @@
+<launch>
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find third_pkg)/config/pid.yaml" command="load"/>
+
+     <!--Load rosparam description Robot-->
+    <param name="robot_description" command="cat '$(find third_pkg)/urdf/actuator_description.urdf'" />
+
+    <!-- Load the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/arm" args="motor_end_effector_position_controller"/>
+    
+    <!-- Convert joints states to TF transforms for rviz, etc -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <!-- <remap from="/joint_states" to="/biped/joint_states" /> -->
+    </node>
+</launch>
