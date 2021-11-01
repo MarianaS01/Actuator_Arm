@@ -8,21 +8,15 @@
     <material name="black">
         <color rgba="0.0 0.0 0.0 1.0"/>
     </material>
-    
-    <!--siempre poner base_link aunque no exista (dummy base link)-->
-    <link name="base_link">     
-    </link>
 
-    <joint name="base_link_motor" type="fixed">
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="base_link"/>
+    <!-- If we need a base_link robot fixed to the ground in Gazebo, in the case of robot manipulators, this link named "world" is required instead of the dummy base_link link for rviz-->
+    <link name = "world" />
+
+    <joint name="world_motor" type="fixed">
+        <parent link="world"/>
         <child link="motor"/>
-        <axis xyz="0.0 0.0 0.0"/>
-        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
     </joint>
-    <!--TRANSMISSION-->
     
-
     <link name="motor">
         <visual>
             <geometry>
@@ -43,7 +37,7 @@
         <inertial>
             <!--origin obtenido de blender-->
             <origin xyz="-0.003295 0.000022 0.013549" rpy="0.0 0.0 0.0"/>
-            <!--mass and inertia obtenido de inventor-->
+            <!--mass and inertia obtenido de inventor 0.03225943-->
             <mass value="0.03225943"/>
             <inertia ixx="0.00001302" ixy="0.0" ixz="0.00000002" iyy="0.00001276" iyz="0.00000019" izz="0.00000278"/>
         </inertial>
@@ -51,23 +45,22 @@
 
     <joint name="motor_end_effector" type="revolute">
         <!--TODO: cambiar origin (debe ser el del piquito del motor), axis and limit-->
-        <origin xyz="0.03225 0.0 0.0135" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.03225 0.0 0.0140" rpy="0.0 0.0 0.0"/>
         <parent link="motor"/>
         <child link="end_effector"/>
         <axis xyz="1.0 0.0 0.0"/>
         <!--Angulo de giro del joint rads-->
-        <limit lower="-3.14" upper="3.14" effort="2.1" velocity="10.471975512"/>
+        <limit lower="-3.14" upper="3.14" effort="2.1" velocity="0.5"/>
     </joint>
+
     <!--TRANSMISSION-->
     <transmission name = "trans_motor_end_effector">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="motor_end_effector">
-            <hardwareInterface>hardware_interface/EffortJointInterface
-            </hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="motor_end_effector">
-            <hardwareInterface>hardware_interface/EffortJointInterface
-            </hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
@@ -93,9 +86,9 @@
             <!--origin obtenido de blender-->
             <!--antes tenía (xyz) y = 0.38215 -->
             <!--origin xyz="0.0 0.0038215 0.0" rpy="0.0 0.0 0.0"-->
-            <origin xyz="0.0 0.0038215 0.0" rpy="0.0 0.0 0.0"/>
-            <!--mass and inertia obtenido de inventor-->
-            <mass value="0.00071418"/>
+            <origin xyz="0.0 0.0 0.0038215" rpy="0.0 0.0 0.0"/>
+            <!--mass and inertia obtenido de inventor 0.00071418-->
+            <mass value="0.4"/>
             <!--ixx="0.00000001" ixy="0.00000000" ixz="0.00000000" iyy="0.00000001" iyz="0.00000000" izz="0.00000001"-->
             <inertia ixx="0.00000001" ixy="0.00000000" ixz="0.00000000" iyy="0.00000001" iyz="0.00000000" izz="0.00000001"/>
         </inertial>
@@ -104,9 +97,6 @@
     <gazebo>
         <plugin name = "gazebo_ros_control" filename = "libgazebo_ros_control.so">
             <robotNamespace>/arm</robotNamespace>
-            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-            <legacyModeNS>true</legacyModeNS>
         </plugin>
     </gazebo>
-
 </robot>
